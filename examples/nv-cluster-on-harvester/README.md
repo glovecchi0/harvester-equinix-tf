@@ -9,7 +9,7 @@
     -  `api_key` to access your Equinix account <- **otherwise you can export the `METAL_AUTH_TOKEN` or `TF_VAR_api_key` variable**
     -  `vm_namespace` to specify the namespace where the VMs will be placed
     -  `ssh_password` to specify the password used for SSH login to Harvester's Virtual Machines
-- Make sure you are logged into your Equinix Account from your local Terminal. See the preparatory steps [here](../../README.md).
+- Make sure you are logged into your Equinix Account from your local Terminal. See the preparatory steps [here](../README.md).
 
 #### Optionally the user can also provide:
 
