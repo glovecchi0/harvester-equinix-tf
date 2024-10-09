@@ -3,11 +3,13 @@ resource "harvester_clusternetwork" "vlan" {
 }
 
 data "harvester_clusternetwork" "vlan" {
-  name = var.cluster_network_name
+  depends_on = [harvester_clusternetwork.vlan]
+  name       = var.cluster_network_name
 }
 
 resource "harvester_vlanconfig" "cluster_vlan_allnodes" {
-  name = var.cluster_network_vlanconfig_name
+  depends_on = [data.harvester_clusternetwork.vlan]
+  name       = var.cluster_network_vlanconfig_name
 
   cluster_network_name = data.harvester_clusternetwork.vlan.name
 
@@ -19,8 +21,9 @@ resource "harvester_vlanconfig" "cluster_vlan_allnodes" {
 }
 
 resource "harvester_network" "cluster_vlan" {
-  name      = var.network_name
-  namespace = var.harvester_namespace
+  depends_on = [harvester_vlanconfig.cluster_vlan_allnodes]
+  name       = var.network_name
+  namespace  = var.harvester_namespace
 
   vlan_id = var.network_vlan_id
 
