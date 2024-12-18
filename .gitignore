@@ -12,6 +12,7 @@ terraform.tfvars
 *-ssh_private_key.pem*
 *-ssh_public_key.pem*
 *config-yaml*
+*config_yaml*
 
 # Temporary files
 **/*.swp
