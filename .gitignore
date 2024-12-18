@@ -19,3 +19,4 @@ terraform.tfvars
 
 # Allow
 !examples/nv-cluster-on-harvester/rke2-config-yaml.tpl
+!examples/rke2-on-harvester/rke2-config-yaml.tpl
