@@ -94,7 +94,7 @@ virtctl ssh --local-ssh=true <SSH_USERNAME>@vmi/<VM_NAME>.<VM_NAMESPACE>
 
 ##### Get the NodePort port assigned to the neuvector-service-webui service and the name of the VM on which the NeuVector Manager pod has been deployed
 
-###### Create ingress resource to access Neuvector using public URL
+##### Create ingress resource to access Neuvector using public URL
 
 ```bash
 export KUBECONFIG=<PREFIX>_kube_config.yml
@@ -115,7 +115,7 @@ kubectl -n <VM_NAMESPACE> get svc
 nc -v -w1 INSTANCE_PUBLIC_IP NODE_PORT #TEST
 ```
 
-##### create the following Ingress resource to access Neuvector UI through a public URL
+##### Create the following Ingress resource to access Neuvector UI through a public URL
 ```bash
 apiVersion: networking.k8s.io/v1
 kind: Ingress
