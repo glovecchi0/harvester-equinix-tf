@@ -94,6 +94,8 @@ virtctl ssh --local-ssh=true <SSH_USERNAME>@vmi/<VM_NAME>.<VM_NAMESPACE>
 
 ##### Get the NodePort port assigned to the neuvector-service-webui service and the name of the VM on which the NeuVector Manager pod has been deployed
 
+###### Create ingress resource to access Neuvector using public URL
+
 ```bash
 export KUBECONFIG=<PREFIX>_kube_config.yml
 kubectl -n <VM_NAMESPACE> get vmi
@@ -111,6 +113,30 @@ virtctl -n <VM_NAMESPACE> expose vm NODE_NAME --name neuvector-console --type No
 ```bash
 kubectl -n <VM_NAMESPACE> get svc
 nc -v -w1 INSTANCE_PUBLIC_IP NODE_PORT #TEST
+```
+
+##### create the following Ingress resource to access Neuvector UI through a public URL
+```bash
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: neuvector-console-ingress
+  namespace: <VM_NAMESPACE>
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: neuvector.<HARVESTER_PUBLIC_IP>.sslip.io # Replace with your desired domain or use an IP for simplicity
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: neuvector-console
+            port:
+              number: <NV_NODE_PORT>
 ```
 
 ##### EXAMPLE
@@ -145,4 +171,37 @@ NAME                TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)           A
 neuvector-console   NodePort   10.53.217.248   <none>        32375:31496/TCP   54s
 $ nc -v -w1 demo-2-PUBLIC-IP 31496 #NeuVector's Console: neuvector-manager-pod-77f6954bc6-zv54g | Harvester's VM: demo-vm-1-umbm | Equinix's Node: demo-2
 Connection to demo-2-PUBLIC-IP port 31496 [tcp/*] succeeded!
+
+$ cat << EOF | kubectl apply -f -
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: neuvector-console-ingress
+  namespace: demo-ns
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: neuvector.<PUBLIC_IP>.sslip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: neuvector-console
+            port:
+              number: 32375
+EOF
+
+ingress.networking.k8s.io/neuvector-console-ingress created
+
+$ curl -kv https://neuvector.<PUBLIC_IP>.sslip.io
+* Host neuvector.<PUBLIC_IP>.sslip.io:443 was resolved.
+* IPv6: (none)
+* IPv4: <PUBLIC_IP>
+*   Trying <PUBLIC_IP>:443...
+* Connected to neuvector.<PUBLIC_IP>.sslip.io (<PUBLIC_IP>) port 443
+
 ```
